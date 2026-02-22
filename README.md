@@ -72,7 +72,7 @@ A beautiful, feature-rich Windows wallpaper changer with Wallhaven integration, 
 ### Option 1: Run from Source
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/wallpaper-changer.git
+git clone https://github.com/avraniel/wallpaper-changer.git
 cd wallpaper-changer
 
 # Install requirements
