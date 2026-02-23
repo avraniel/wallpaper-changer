@@ -33,18 +33,32 @@ except ImportError:
     import keyboard
 
 # ============================================================================
-# CONFIGURATION
+# CONFIGURATION - FIXED FOR EXE
 # ============================================================================
 
-CONFIG_FILE = "wallpaper_changer_config.json"
-DATABASE_FILE = "wallhaven_favorites.db"
-THEME_FILE = "theme_settings.json"
-LAST_WALLPAPER_FILE = "last_wallpaper.dat"
-SAVED_FOLDERS_FILE = "saved_folders.json"
-SCHEDULES_FILE = "schedules.json"
-SOURCES_FILE = "sources.json"
-KEYWORDS_FILE = "keywords.json"
-FAVORITES_FOLDER_FILE = "favorites_folder.json"
+# Get the user's AppData folder (writable location for EXE)
+if getattr(sys, 'frozen', False):
+    # Running as compiled executable
+    APP_DATA = os.path.join(os.environ.get('APPDATA', os.path.expanduser('~')), 'WallpaperChanger')
+else:
+    # Running as script
+    APP_DATA = os.path.dirname(os.path.abspath(__file__))
+
+# Create AppData folder if it doesn't exist
+os.makedirs(APP_DATA, exist_ok=True)
+
+# Database and config files in AppData folder
+CONFIG_FILE = os.path.join(APP_DATA, "wallpaper_changer_config.json")
+DATABASE_FILE = os.path.join(APP_DATA, "wallhaven_favorites.db")
+THEME_FILE = os.path.join(APP_DATA, "theme_settings.json")
+LAST_WALLPAPER_FILE = os.path.join(APP_DATA, "last_wallpaper.dat")
+SAVED_FOLDERS_FILE = os.path.join(APP_DATA, "saved_folders.json")
+SCHEDULES_FILE = os.path.join(APP_DATA, "schedules.json")
+SOURCES_FILE = os.path.join(APP_DATA, "sources.json")
+KEYWORDS_FILE = os.path.join(APP_DATA, "keywords.json")
+FAVORITES_FOLDER_FILE = os.path.join(APP_DATA, "favorites_folder.json")
+
+print(f"App data folder: {APP_DATA}")  # Debug line - can be removed later
 
 # Get user's Pictures folder
 PICTURES_FOLDER = os.path.join(os.path.expanduser("~"), "Pictures")
@@ -1040,6 +1054,10 @@ class BatchDownloader:
 
 class FavoritesDatabase:
     def __init__(self):
+        # Ensure directory exists for database
+        db_dir = os.path.dirname(DATABASE_FILE)
+        os.makedirs(db_dir, exist_ok=True)
+        
         self.conn = sqlite3.connect(DATABASE_FILE, check_same_thread=False)
         self.lock = threading.Lock()
         self.create_tables()
